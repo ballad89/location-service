@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"os"
 
 	"github.com/oschwald/geoip2-golang"
 	"github.com/pariz/gountries"
@@ -12,7 +13,9 @@ import (
 
 func main() {
 
-	db, err := geoip2.Open("/Users/husayn/Downloads/GeoLite2-Country.mmdb")
+	dbLocation := os.Getenv("GEO_DB")
+
+	db, err := geoip2.Open(dbLocation)
 
 	if err != nil {
 		panic(err)

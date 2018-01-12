@@ -1,0 +1,33 @@
+{
+	"ImportPath": "gitlab.com/ballad89/location-service",
+	"GoVersion": "go1.9",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/oschwald/geoip2-golang",
+			"Comment": "v1.0.0",
+			"Rev": "496a3cbcb65a3cb54497fe4ae2273319e85160a4"
+		},
+		{
+			"ImportPath": "github.com/oschwald/maxminddb-golang",
+			"Comment": "v1.0.0",
+			"Rev": "2af0544f8e032bc7a363e897fbd9c6ed4884a1d6"
+		},
+		{
+			"ImportPath": "github.com/pariz/gountries",
+			"Rev": "01a8f4c7c6e404b6529ada4b5e25f00672670f6d"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "1e2299c37cc91a509f1b12369872d27be0ce98a6"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/windows",
+			"Rev": "1e2299c37cc91a509f1b12369872d27be0ce98a6"
+		},
+		{
+			"ImportPath": "gopkg.in/yaml.v2",
+			"Rev": "eb3733d160e74a9c7e442f435eb3bea458e1d19f"
+		}
+	]
+}
