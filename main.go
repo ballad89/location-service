@@ -11,9 +11,17 @@ import (
 	"github.com/pariz/gountries"
 )
 
+func getOrDefault(key, def string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		return def
+	}
+	return value
+}
+
 func main() {
 
-	dbLocation := os.Getenv("GEO_DB")
+	dbLocation := getOrDefault("GEO_DB", "./GeoLite2-Country.mmdb")
 
 	db, err := geoip2.Open(dbLocation)
 
