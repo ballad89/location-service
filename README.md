@@ -1,6 +1,6 @@
 # location-service
 
-[![](https://images.microbadger.com/badges/image/<YOUR IMAGE>.svg)](http://microbadger.com/images/ballad/location-service “Get your own image badge on microbadger.com”)
+[![](https://images.microbadger.com/badges/version/ballad/location-service.svg)](https://microbadger.com/images/ballad/location-service "Get your own version badge on microbadger.com")
 
 This is a microservice which takes a public ip address and returns information about the country matching the ip
 
