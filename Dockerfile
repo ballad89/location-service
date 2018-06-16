@@ -1,13 +1,23 @@
-FROM golang:1.8-alpine
+FROM golang:1.10.3-alpine
 
 ADD . /go/src/gitlab.com/ballad89/location-service
 
-ADD GeoLite2-Country.mmdb /go/src/gitlab.com/ballad89/GeoLite2-Country.mmdb
+ADD http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.tar.gz /go/src/gitlab.com/ballad89/location-service/
 
 WORKDIR /go/src/gitlab.com/ballad89/location-service
 
-RUN go install .
+RUN tar -xzf GeoLite2-Country.tar.gz
 
-ENTRYPOINT location-service
+RUN go build
 
-EXPOSE 1989
+
+FROM gliderlabs/alpine:3.6
+
+WORKDIR /root/
+COPY --from=0 /go/src/gitlab.com/ballad89/location-service/location-service .
+COPY --from=0 /go/src/gitlab.com/ballad89/location-service/GeoLite2-Country_*/GeoLite2-Country.mmdb .
+
+ENV PORT ":3000"
+CMD ["./location-service"]
+
+EXPOSE 3000

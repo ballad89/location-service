@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"net"
 	"net/http"
 	"os"
@@ -23,6 +23,8 @@ func main() {
 
 	dbLocation := getOrDefault("GEO_DB", "./GeoLite2-Country.mmdb")
 
+	log.Println("Using db file at", dbLocation)
+
 	db, err := geoip2.Open(dbLocation)
 
 	if err != nil {
@@ -34,14 +36,16 @@ func main() {
 
 	http.HandleFunc("/location", func(w http.ResponseWriter, r *http.Request) {
 
-		keys, ok := r.URL.Query()["client_ip"]
+		clientIpKey, ok := r.URL.Query()["client_ip"]
 
-		if !ok || len(keys) < 1 {
-			println("Url Param 'key' is missing")
+		if !ok || len(clientIpKey) < 1 {
+			log.Println("Url Param 'client_ip' is missing")
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Url Param 'client_ip' is missing"))
+			return
 		}
 
-		clientIP := keys[0]
-		fmt.Println(clientIP)
+		clientIP := clientIpKey[0]
 
 		if clientIP != "" {
 			ip := net.ParseIP(clientIP)
@@ -49,26 +53,42 @@ func main() {
 			record, err := db.Country(ip)
 
 			if err != nil {
-				println(err)
+				log.Println(err.Error())
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Ip not a valid public ip"))
+				return
 			}
-
-			fmt.Println(record.Country)
 
 			country := record.Country.Names["en"]
 
-			fmt.Println(country)
+			if country == "" {
+				log.Println("Ip did not return a country")
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Ip did not return a country"))
+				return
+			}
+			log.Println("Found country", country)
 
 			count, err := query.FindCountryByName(country)
 
 			if err != nil {
-
+				log.Println(err.Error())
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("Country details not found in db"))
+				return
 			}
 
 			res, err := json.Marshal(count)
 
 			if err != nil {
-
+				log.Println(err.Error())
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write([]byte("Internal Server Error"))
+				return
 			}
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
 
 			w.Write(res)
 
@@ -80,7 +100,11 @@ func main() {
 		return
 	})
 
-	err = http.ListenAndServe(":1989", nil)
+	port := getOrDefault("PORT", ":1989")
+
+	log.Println("Starting up on ...", port)
+
+	err = http.ListenAndServe(port, nil)
 
 	if err != nil {
 		panic(err)
