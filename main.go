@@ -53,7 +53,7 @@ func main() {
 			record, err := db.Country(ip)
 
 			if err != nil {
-				log.Println(err.Error())
+				log.Println(err.Error(), clientIP)
 				w.WriteHeader(http.StatusBadRequest)
 				w.Write([]byte("Ip not a valid public ip"))
 				return
